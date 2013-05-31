@@ -159,8 +159,8 @@ public:
 	static ifstream fin;//连续读取文件
 	list(list* n_cmd = NULL, list* n_step = NULL) : ptr_next(n_cmd), ptr_loop(n_step) {}
 	//构造函数
-	void read_asm(char*);//读取一行语句并储存相关命令 
-	void run_asm();//执行当前行语句
+	void read_asm(char*);//读取文件，构造命令链表
+	void run_asm();//按照命令链表，执行语句
 };
 
 

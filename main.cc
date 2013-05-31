@@ -103,7 +103,15 @@ void sub::func()
 	reg -> save(operand_1, reg -> load(operand_1) - hex_to_int(operand_2));
 }
 
-
+void list::read_asm(char* file_name)
+{
+	fin.open(file_name);
+	while(!fin.eof())
+	{
+		string cmd_line;
+		getline(fin, cmd_line);
+	}
+}
 
 int main(int argc, char** argv)
 {
@@ -114,8 +122,11 @@ int main(int argc, char** argv)
 		         || argv[1][sizeof argv[1] - 2] != 'm')
 		cout << "invalid input format. " << endl
 			 << "asm.exe file_name.asm"  << endl;
-	else
-		//cmd_list.read_asm(argv[1]);
 
+	else
+	{
+		//cmd_list.read_asm(argv[1]);
+		//cmd_list.read_asm();
+	}
 	return 0;
 }

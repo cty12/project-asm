@@ -1,0 +1,34 @@
+﻿寄存器：
+
+	ah 控制输入/输出
+	dl 数据
+	cx 循环次数
+	bh
+	dh
+	bl
+	al
+
+
+指令：
+	opcode [operand] [oprand]
+
+	mov [reg] [hex_value]
+	mov [reg] [reg]
+	loop [label]
+	jmp [label]
+		jg / jl / je / jne / jz / jnz [label]
+	inc [reg] (increase by 1
+	dec [reg] (decrease by 1
+	add [reg] [hex_value] (reg_content + hex_value
+	sub [reg] [hex_value] (reg_content + hex_value
+
+	int 20 (exit
+	int 21 (when ah = 1, input dl; ah = 2, output dl
+	
+
+标记和注释：
+
+	label: 
+	;
+	space / tab缩进
+

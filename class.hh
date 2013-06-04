@@ -153,6 +153,11 @@ public:
 class list 
 {//ASM语句串
 	cmd* this_cmd;
+	static struct cmd_buffer[100]
+	{
+		cmd* ptr;
+		string 
+	};
 	list* ptr_next;//顺序执行
 	list* ptr_loop;//jmp或loop跳转
 	void trace();//在read_asm里调用它来决定访问哪一个节点并访问那个节点

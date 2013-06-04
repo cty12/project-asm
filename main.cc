@@ -110,9 +110,13 @@ void list::read_asm(char* file_name)
 	{
 		string cmd_line;
 		getline(fin, cmd_line);
-		if(cmd_line[0] == 'm') //mov
+		if(cmd_line.compare(0, 3, "mov")) //mov
 			this_cmd = new mov;
-		else if(cmd_line[0] == '')
+		else if(cmd_line.compare(0, 4, "loop")) //loop
+		{
+			this_cmd = new loop;
+			
+		}
 	}
 }
 

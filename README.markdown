@@ -2,9 +2,17 @@
 
 ------------------------------
 
+/// NOT COMPLETED NOW!  
+
+co-developers:
+
+* Li Xintian
+* Yu Hanxuan
+* Chen Tianyu
+
 features: (all the opcode & hex operand should be written in lower-case
 
-commands:  
+	commands:  
 
 * mov [reg] [value / reg]
 * loop [label]
@@ -18,7 +26,7 @@ commands:
 * int 21 (when ah = 1, input dl; ah = 2, output dl
 * [label]
 
-registers:  
+	registers:  
 
 * ah (default as the controller for in / out
 * al
@@ -28,11 +36,11 @@ registers:
 * dh
 * dl (data
 
-comments:  
+	comments:  
 
 * ;
 
-indentation:  
+	indentation:  
 
 * tab
 * space

@@ -110,6 +110,9 @@ void list::read_asm(char* file_name)
 	{
 		string cmd_line;
 		getline(fin, cmd_line);
+		if(cmd_line[0] == 'm') //mov
+			this_cmd = new mov;
+		else if(cmd_line[0] == '')
 	}
 }
 

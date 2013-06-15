@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Project-asm : This is a simple ASM interpreter that supports a series of commands. Written in Cpp. 这是一个C++写的简单的汇编语言解释器。" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Project-asm</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/cty12/project-asm">View on GitHub</a>
+
+          <h1 id="project_title">Project-asm</h1>
+          <h2 id="project_tagline">This is a simple ASM interpreter that supports a series of commands. Written in Cpp. 这是一个C++写的简单的汇编语言解释器。</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/cty12/project-asm/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/cty12/project-asm/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="" class="anchor" href="#"><span class="octicon octicon-link"></span></a>设计说明</h1>
+
+<hr><h3>
+<a name="1-" class="anchor" href="#1-"><span class="octicon octicon-link"></span></a>1. 小组成员：</h3>
+
+<p>李心田 / 俞寒轩 / 陈天昱</p>
+
+<h3>
+<a name="2-" class="anchor" href="#2-"><span class="octicon octicon-link"></span></a>2. 设计综述：</h3>
+
+<p>此次大作业主要包含四个类：负责寄存器的Register类，主要成员是两个数组分别储存寄存器的名称和数据（整数）。这个类只创建一个对象。包括的方法主要有两个，即储存和读取。负责储存‘命令’的cmd类，这是一个抽象类，各个子类负责不同的命令，但是它们的相同之处是都具有两个操作数和一个‘功能’，所以将它们抽象为一个包括纯虚函数func()的cmd类，各个子类撰写自己不同的func()达到多态。每个命令最多有两个操作数operand1和operand2。寄存器对象也应该是这个类的成员，因为是‘命令’在使用寄存器。还有一个类node，因为目前cmd是离散的，我们需要一个结构来将这些命令串接起来。其中每个结点储存了一个cmd指针（因为我们需要这个结构将cmd派生类的对象串接起来）和一个指向下一个node对象结点的指针。这个结构还能自由伸长。为了实现有效的goto跳转，链表是不可能用的。只有一种办法，给链表的每个结点添加一个指针，指向循环跳转的目标地址。各个对象构成一张图论中讲的‘图’。这张图可以实现自我构造，其中构造的数据源头就是读取进来的程序源代码。这张图还能实现自我遍历执行。</p>
+
+<p>这就是我们一开始的想法，后来我提出了一个新的类cmd _ buffer。这个类的名字不太准确，因为它后来单纯的用来储存label了。但是我最初设想的不是这样，它会不分跳转命令和标签的全部存进来，然后单独用一个变量表示这个结点的‘度’是正还是负，从而我们可以取消第二个指针，把node用单纯的链表实现。事实证明这是一个奇葩的设计，所以俞寒轩又提出把ptr _ loop加回来。然后我们三个经过激烈的讨论达成了一致。所以现在一共是四个主要的类，当然还有不计其数的cmd派生类。</p>
+
+<p>主要设计就是这样。现在看来，这是一个较为稳定合理的设计。它对修改是相当封闭的（之后会介绍如何为程序添加新的命令）。我的工作主要是参与了最初这个程序的架构，也就是当这个程序什么也没有的时候，我提出了可以将命令构成一张图——而且为了便于修改，这张图的‘骨架’和‘肉’必须分开，也就是cmd和node要写成两个部分。命令都去继承同一个类。我写了一部分cmd和Register类的实现。虽然最后的成品和最初的构思有少许差距，不过基本上还是一直按一开始的想法在搞。李心田和俞寒轩同学解决了大量关键的细节实现，而且是他们最终将ptr _ loop的存在确定了下来。</p>
+
+<p>之后工程的所有代码都会上传到_github_，用户可以通过搜索_project-asm_得到。</p>
+
+<h3>
+<a name="3-" class="anchor" href="#3-"><span class="octicon octicon-link"></span></a>3. 基本命令</h3>
+
+<p>寄存器：</p>
+
+<pre><code>ah 控制输入/输出
+dl 数据
+cx 循环次数
+bh
+dh
+bl
+al
+</code></pre>
+
+<p>指令：</p>
+
+<pre><code>opcode [operand] [oprand]
+mov [reg] [hex_value]
+mov [reg] [reg]
+loop [label]
+jmp [label]
+    jg / jl / je / jne / jz / jnz [label]
+inc [reg] (increase by 1
+dec [reg] (decrease by 1
+add [reg] [hex_value] (reg_content + hex_value
+sub [reg] [hex_value] (reg_content + hex_value
+
+int 20 (exit
+int 21 (when ah = 1, input dl; ah = 2, output dl
+</code></pre>
+
+<p>标记和注释：</p>
+
+<pre><code>label: 
+;
+space / tab缩进
+</code></pre>
+
+<h3>
+<a name="4-v-20" class="anchor" href="#4-v-20"><span class="octicon octicon-link"></span></a>4. <strong>扩展命令</strong>（V 2.0）：</h3>
+
+<p>相比TranslatorVer1.0的版本，增加了一些指令。</p>
+
+<ol>
+<li><p>交换指令：xch</p></li>
+<li><p>清除指令：clr</p></li>
+<li><p>逻辑与指令：anl</p></li>
+<li><p>逻辑或指令：orl</p></li>
+</ol><p>由于封闭性较好，修改主要是增加从cmd派生的子类。另外再在node类中的save函数中的判断部分做一些判断的扩展即可。（本修改没有扩展寄存器，如果需要扩展寄存器，在寄存器静态数组定义时多定义一元即可，参见以上使用书册）</p>
+
+<p>此外，由于运算指令过于相似（包括add，sub已经上面的anl，orl），故新增加了一个ope类（继承自cmd类），让所有二元运算指令从一个ope类里继承。ope类里可以完成第二操作数的类型判断工作与结果的存储工作，具体运算在其operate(int,int)虚函数中完成。此函数的具体实现在ope类的子类里完成。这是科学合理的。</p>
+
+<h3>
+<a name="5-" class="anchor" href="#5-"><span class="octicon octicon-link"></span></a>5. 用法：</h3>
+
+<p>请自行Makefile编译。使用方法默认是命令行下：</p>
+
+<pre><code>Translator2 [asm_File.asm]
+</code></pre>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Project-asm maintained by <a href="https://github.com/cty12">cty12</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>

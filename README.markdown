@@ -15,7 +15,45 @@
 
 之后工程的所有代码都会上传到_github_，用户可以通过搜索_project-asm_得到。
 
-###3. **扩展命令**（V 2.0）：
+###3. 基本命令
+
+寄存器：
+
+	ah 控制输入/输出
+	dl 数据
+	cx 循环次数
+	bh
+	dh
+	bl
+	al
+
+
+指令：
+
+	opcode [operand] [oprand]
+	mov [reg] [hex_value]
+	mov [reg] [reg]
+	loop [label]
+	jmp [label]
+		jg / jl / je / jne / jz / jnz [label]
+	inc [reg] (increase by 1
+	dec [reg] (decrease by 1
+	add [reg] [hex_value] (reg_content + hex_value
+	sub [reg] [hex_value] (reg_content + hex_value
+
+	int 20 (exit
+	int 21 (when ah = 1, input dl; ah = 2, output dl
+	
+
+标记和注释：
+
+	label: 
+	;
+	space / tab缩进
+
+
+
+###4. **扩展命令**（V 2.0）：
 
 相比TranslatorVer1.0的版本，增加了一些指令。
 

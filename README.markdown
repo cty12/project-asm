@@ -1,46 +1,32 @@
-## Project-ASM is an open commandline ASM code (subset) interpreter.
+#大作业设计报告
+-------------------------------------------
 
-------------------------------
+###1. 小组成员：
 
-/// NOT COMPLETED NOW!  
+李心田 / 俞寒轩 / 陈天昱
 
-co-developers:
+###2. 设计综述：
 
-* Li Xintian
-* Yu Hanxuan
-* Chen Tianyu
+此次大作业主要包含四个类：负责寄存器的Register类，主要成员是两个数组分别储存寄存器的名称和数据（整数）。这个类只创建一个对象。包括的方法主要有两个，即储存和读取。负责储存‘命令’的cmd类，这是一个抽象类，各个子类负责不同的命令，但是它们的相同之处是都具有两个操作数和一个‘功能’，所以将它们抽象为一个包括纯虚函数func()的cmd类，各个子类撰写自己不同的func()达到多态。每个命令最多有两个操作数operand1和operand2。寄存器对象也应该是这个类的成员，因为是‘命令’在使用寄存器。还有一个类node，因为目前cmd是离散的，我们需要一个结构来将这些命令串接起来。其中每个结点储存了一个cmd指针（因为我们需要这个结构将cmd派生类的对象串接起来）和一个指向下一个node对象结点的指针。这个结构还能自由伸长。为了实现有效的goto跳转，链表是不可能用的。只有一种办法，给链表的每个结点添加一个指针，指向循环跳转的目标地址。各个对象构成一张图论中讲的‘图’。这张图可以实现自我构造，其中构造的数据源头就是读取进来的程序源代码。这张图还能实现自我遍历执行。
 
-features: (all the opcode & hex operand should be written in lower-case
+这就是我们一开始的想法，后来我提出了一个新的类cmd _ buffer。这个类的名字不太准确，因为它后来单纯的用来储存label了。但是我最初设想的不是这样，它会不分跳转命令和标签的全部存进来，然后单独用一个变量表示这个结点的‘度’是正还是负，从而我们可以取消第二个指针，把node用单纯的链表实现。事实证明这是一个奇葩的设计，所以俞寒轩又提出把ptr _ loop加回来。然后我们三个经过激烈的讨论达成了一致。所以现在一共是四个主要的类，当然还有不计其数的cmd派生类。
 
-	commands:  
+主要设计就是这样。现在看来，这是一个较为稳定合理的设计。它对修改是相当封闭的（之后会介绍如何为程序添加新的命令）。我的工作主要是参与了最初这个程序的架构，也就是当这个程序什么也没有的时候，我提出了可以将命令构成一张图——而且为了便于修改，这张图的‘骨架’和‘肉’必须分开，也就是cmd和node要写成两个部分。命令都去继承同一个类。我写了一部分cmd和Register类的实现。虽然最后的成品和最初的构思有少许差距，不过基本上还是一直按一开始的想法在搞。李心田和俞寒轩同学解决了大量关键的细节实现，而且是他们最终将ptr _ loop的存在确定了下来。
 
-* mov [reg] [value / reg]
-* loop [label]
-* jmp [label]
-* 	jg / jl / je / jne / jz / jnz [label]
-* inc [reg] (increase by 1
-* dec [reg] (decrease by 1
-* add [reg] [hex_value] (reg_content + hex_value
-* sub [reg] [hex_value] (reg_content + hex_value
-* int 20 (exit
-* int 21 (when ah = 1, input dl; ah = 2, output dl
-* [label]
+之后工程的所有代码都会上传到_github_，用户可以通过搜索_project-asm_得到。
 
-	registers:  
+###3. **扩展命令**（V 2.0）：
 
-* ah (default as the controller for in / out
-* al
-* bh
-* bl
-* cx (loop controller
-* dh
-* dl (data
+相比TranslatorVer1.0的版本，增加了一些指令。
 
-	comments:  
+1. 交换指令：xch
 
-* ;
+2. 清除指令：clr
 
-	indentation:  
+3. 逻辑与指令：anl
 
-* tab
-* space
+4. 逻辑或指令：orl
+
+由于封闭性较好，修改主要是增加从cmd派生的子类。另外再在node类中的save函数中的判断部分做一些判断的扩展即可。（本修改没有扩展寄存器，如果需要扩展寄存器，在寄存器静态数组定义时多定义一元即可，参见以上使用书册）
+
+此外，由于运算指令过于相似（包括add，sub已经上面的anl，orl），故新增加了一个ope类（继承自cmd类），让所有二元运算指令从一个ope类里继承。ope类里可以完成第二操作数的类型判断工作与结果的存储工作，具体运算在其operate(int,int)虚函数中完成。此函数的具体实现在ope类的子类里完成。这是科学合理的。
